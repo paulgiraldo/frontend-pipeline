@@ -81,7 +81,7 @@ pipeline {
                     script {
                         echo "Realizando Backup al bucket s3..."
                         def ruta = LocalDateTime.now()format("yyyyMMdd-HHmmss")
-                        sh "aws s3 sync s3://bucket-codigo-paul s3://bucket-codigo-backup/paul/${ruta} --delete"                        
+                        sh "aws s3 sync s3://bucket-codigo-paul s3://bucket-codigo-backup/paul/20250127 --delete"                        
                     }                   
                 }
             }
