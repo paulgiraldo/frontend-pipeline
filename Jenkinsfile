@@ -68,5 +68,26 @@ pipeline {
                 }
             }
         }
+
+        stage('Realizar Backup del proyecto al bucket s3 AWS : bucket-codigo-backup ') {
+            agent {
+                docker {
+                    image 'amazon/aws-cli:2.23.7'
+                    args '--entrypoint ""'
+                }
+            }
+            steps {
+                withAWS(credentials: 'aws-credentials-s3', region: 'us-east-1') {
+                    script {
+                        echo "Realizando Backup al bucket s3..."
+                        def ruta = LocalDateTime.now()format("yyyyMMdd-HHmmss")
+                        sh "aws s3 sync s3://bucket-codigo-paul s3://bucket-codigo-backup/paul/${ruta} --delete"                        
+                    }                   
+                }
+            }
+        }
+
+
+
     }
 }
