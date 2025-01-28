@@ -82,6 +82,7 @@ pipeline {
                         echo "Realizando Backup al bucket s3..."
                         import java.time.*
                         def ruta = LocalDateTime.now()format("yyyyMMdd-HHmmss")
+                        echo "Fecha y Hora Actual  ${ruta}"
                         sh '''
                             aws s3 sync build/ s3://bucket-codigo-backup/paul/bk20250127 --delete
                         '''
