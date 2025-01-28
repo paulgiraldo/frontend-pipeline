@@ -79,7 +79,7 @@ pipeline {
             steps {
                 withAWS(credentials: 'aws-credentials-s3', region: 'us-east-1') {
                     script {
-                        echo "Realizando Backup al bucket s3..."
+                        echo "Realizando Backup al bucket s3 ..."
                         import java.time.*
                         def ruta = LocalDateTime.now()format("yyyyMMdd-HHmmss")
                         echo "Fecha y Hora Actual  ${ruta}"
