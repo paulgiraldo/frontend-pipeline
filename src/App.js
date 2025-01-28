@@ -17,7 +17,7 @@ function App() {
         >
           Learn React
         </a>
-        <div>PROYECTO FRONT PARA PIPELINE: Paul Giraldo</div>
+        <div>PROYECTO FRONT PARA PIPELINE: Paul Giraldo - Version 01</div>
       </header>
     </div>
   );
