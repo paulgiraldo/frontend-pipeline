@@ -80,8 +80,9 @@ pipeline {
                 withAWS(credentials: 'aws-credentials-s3', region: 'us-east-1') {
                     script {
                         echo "Realizando Backup al bucket s3..."
-                        def ruta = LocalDateTime.now()format("yyyyMMdd-HHmmss")
-                        sh "aws s3 sync build/ s3://bucket-codigo-backup/paul/20250127 --delete"                        
+                        sh '''
+                            aws s3 sync build/ s3://bucket-codigo-backup/paul/bk20250127 --delete
+                        '''
                     }                   
                 }
             }
