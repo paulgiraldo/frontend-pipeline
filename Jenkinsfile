@@ -20,6 +20,9 @@ pipeline {
         S3_BUCKET = 'bucket-codigo-paul' // Nombre del bucket S3
         RECIPIENT_EMAIL = 'paulgiraldo72@gmail.com' // Dirección de correo electrónico del destinatario
         BACKUP_BUCKET = 'bucket-codigo-backup' // Bucket para el respaldo
+
+        VERCEL_TOKEN = credentials('VERCEL_TOKEN')
+
     }
 
     stages {
@@ -52,6 +55,53 @@ pipeline {
             }
         }
     }
+
+    stages {
+        stage('Mover archivos entre buckets s3 AWS hacia Carpeta BKTMP ...') {
+            when {
+                expression { params.DEPLOY_SERVER == 'VERCEL' }
+            }
+            agent {
+                docker {
+                    image 'amazon/aws-cli:2.23.7'
+                    args '--entrypoint ""'
+                }
+            }
+            steps {
+                withAWS(credentials: 'aws-credentials-s3', region: 'us-east-1') {
+
+                    script {
+                      
+                        echo "Sincronizando archivos entre buckets s3 y Vercel.."
+                        sh "mkdir -p BKTMP"
+
+                        sh """
+                            aws s3 sync s3://${params.BUCKET_FUENTE}/${params.CARPETA_USUARIO}/vercel/${params.CARPETA_FUENTE}/ BKTMP/ --delete
+                        """
+                    }                   
+                }
+            }
+        }
+    }
+
+    stages {
+        stage('Mover archivos desde la Carpeta BKTMP hacia VERCEL...') {
+            when {
+                expression { params.DEPLOY_SERVER == 'VERCEL' }
+            }
+            agent {
+                docker { image 'node:18-alpine'}
+            }
+            steps {
+                sh """
+                    npm install -g vercel
+                    vercel deploy BKTMP --prod --name front-vercel --token $VERCEL_TOKEN --yes
+                """
+            }
+        }
+    }
+
+
 
     post {
         success {
