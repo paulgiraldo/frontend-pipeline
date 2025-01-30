@@ -61,7 +61,7 @@ pipeline {
                 withAWS(credentials: 'aws-credentials-s3', region: 'us-east-1') {
                     script {
                         def ultimaCarpetaDeBackup = sh(returnStdout: true, script: '''
-                            aws s3 ls s3://bucket-codigo-backup/paul/ | awk '{print $2}' | grep VERSION_ | sort | tail -n 1
+                            aws s3 ls s3://bucket-codigo-backup/paul/master/ | awk '{print $2}' | grep VERSION_ | sort | tail -n 1
                         ''').trim()
 
                         echo "Ultima carpeta del bucket backup: ${ultimaCarpetaDeBackup}"
@@ -84,7 +84,7 @@ pipeline {
 
                         echo "Subiendo los archivos al bucket s3 en la carpeta ${baseVersion}..."
                         sh """
-                            aws s3 sync build/ s3://bucket-codigo-backup/paul/${baseVersion}/ --delete
+                            aws s3 sync build/ s3://bucket-codigo-backup/paul/master/${baseVersion}/ --delete
                         """
                     }                   
                 }
