@@ -45,7 +45,7 @@ pipeline {
                       
                         echo "Sincronizando archivos entre buckets s3..."
                         sh """
-                            aws s3 sync s3://${params.BUCKET_FUENTE}/${params.CARPETA_USUARIO}/mastes/${params.CARPETA_FUENTE}/ s3://${params.BUCKET_TARGET}/ --delete
+                            aws s3 sync s3://${params.BUCKET_FUENTE}/${params.CARPETA_USUARIO}/master/${params.CARPETA_FUENTE}/ s3://${params.BUCKET_TARGET}/ --delete
                         """
                     }                   
                 }
