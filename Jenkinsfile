@@ -3,9 +3,15 @@ pipeline {
 
     parameters {
         string(name: 'BUCKET_FUENTE', defaultValue: 'bucket-codigo-backup', description: 'Nombre de bucket de origen...')
-        string(name: 'BUCKET_TARGET', defaultValue: 'bucket-codigo-paul', description: 'Nombre de bucket objetivo...')
         string(name: 'CARPETA_USUARIO', defaultValue: 'paul', description: 'Nombre de la carpeta del Usuario..')
+
+        choice(
+            choices: ['AWS' , 'VERCEL'],
+            description: '',
+            name: 'DEPLOY_SERVER'
+        )
         string(name: 'CARPETA_FUENTE', defaultValue: 'VERSION_1.1', description: 'Nombre de la carpeta del bucket  origen...')
+        string(name: 'BUCKET_TARGET', defaultValue: 'bucket-codigo-paul', description: 'Nombre de bucket destino en caso "CARPETA_SERVIDOR = master" ...')
     }
 
     environment {
@@ -17,19 +23,10 @@ pipeline {
     }
 
     stages {
-        stage('Validar parametros...') {
-            agent any
-            steps {
-                script {
-                    echo "BUCKET DE ORIGEN: ${params.BUCKET_FUENTE}"
-                    echo "BUCKET DE DESTINO: ${params.BUCKET_TARGET}"
-                    echo "CARPETA DE USUARIO: ${params.CARPETA_USUARIO}"
-                    echo "CARPETA DE ORIGEN: ${params.CARPETA_FUENTE}"
-                }
-            }
-        }
-
         stage('Mover archivos entre buckets s3 AWS ...') {
+            when {
+                expression { params.DEPLOY_SERVER == 'AWS' }
+            }
             agent {
                 docker {
                     image 'amazon/aws-cli:2.23.7'
@@ -48,7 +45,7 @@ pipeline {
                       
                         echo "Sincronizando archivos entre buckets s3..."
                         sh """
-                            aws s3 sync s3://${params.BUCKET_FUENTE}/${params.CARPETA_USUARIO}/${params.CARPETA_FUENTE}/ s3://${params.BUCKET_TARGET}/ --delete
+                            aws s3 sync s3://${params.BUCKET_FUENTE}/${params.CARPETA_USUARIO}/mastes/${params.CARPETA_FUENTE}/ s3://${params.BUCKET_TARGET}/ --delete
                         """
                     }                   
                 }
