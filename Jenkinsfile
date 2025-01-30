@@ -54,9 +54,8 @@ pipeline {
                 }
             }
         }
-    }
+    
 
-    stages {
         stage('Mover archivos entre buckets s3 AWS hacia Carpeta BKTMP ...') {
             when {
                 expression { params.DEPLOY_SERVER == 'VERCEL' }
@@ -82,9 +81,8 @@ pipeline {
                 }
             }
         }
-    }
+    
 
-    stages {
         stage('Mover archivos desde la Carpeta BKTMP hacia VERCEL...') {
             when {
                 expression { params.DEPLOY_SERVER == 'VERCEL' }
