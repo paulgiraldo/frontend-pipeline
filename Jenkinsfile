@@ -93,7 +93,7 @@ pipeline {
             steps {
                 sh """
                     npm install -g vercel
-                    vercel deploy --prod --name front-vercel --token $VERCEL_TOKEN --yes
+                    vercel deploy build --prod --name front-vercel --token $VERCEL_TOKEN --yes
                 """
             }
         }
