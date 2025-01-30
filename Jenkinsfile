@@ -11,7 +11,7 @@ pipeline {
             name: 'DEPLOY_SERVER'
         )
         string(name: 'CARPETA_FUENTE', defaultValue: 'VERSION_1.1', description: 'Nombre de la carpeta del bucket  origen...')
-        string(name: 'BUCKET_TARGET', defaultValue: 'bucket-codigo-paul', description: 'Nombre de bucket destino en caso "CARPETA_SERVIDOR = master" ...')
+        string(name: 'BUCKET_TARGET', defaultValue: 'bucket-codigo-paul', description: 'Nombre de bucket destino en caso "DEPLOY_SERVER = AWS" ...')
     }
 
     environment {
@@ -56,7 +56,7 @@ pipeline {
         }
     
 
-        stage('Mover archivos entre buckets s3 AWS hacia Carpeta BKTMP ...') {
+        stage('Mover archivos entre buckets s3 AWS hacia Carpeta build ...') {
             when {
                 expression { params.DEPLOY_SERVER == 'VERCEL' }
             }
@@ -72,10 +72,10 @@ pipeline {
                     script {
                       
                         echo "Sincronizando archivos entre buckets s3 y Vercel.."
-                        sh "mkdir -p BKTMP"
+                        sh "mkdir -p build"
 
                         sh """
-                            aws s3 sync s3://${params.BUCKET_FUENTE}/${params.CARPETA_USUARIO}/vercel/${params.CARPETA_FUENTE}/ BKTMP/ --delete
+                            aws s3 sync s3://${params.BUCKET_FUENTE}/${params.CARPETA_USUARIO}/vercel/${params.CARPETA_FUENTE}/ build/ --delete
                         """
                     }                   
                 }
@@ -83,7 +83,7 @@ pipeline {
         }
     
 
-        stage('Mover archivos desde la Carpeta BKTMP hacia VERCEL...') {
+        stage('Mover archivos desde la Carpeta build hacia VERCEL...') {
             when {
                 expression { params.DEPLOY_SERVER == 'VERCEL' }
             }
@@ -93,7 +93,7 @@ pipeline {
             steps {
                 sh """
                     npm install -g vercel
-                    vercel deploy BKTMP --prod --name front-vercel --token $VERCEL_TOKEN --yes
+                    vercel deploy --prod --name front-vercel --token $VERCEL_TOKEN --yes
                 """
             }
         }
